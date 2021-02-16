@@ -56,10 +56,11 @@ UserSchema.methods.toJSON = function () {
 }
 
 UserSchema.statics.findByCredentials = async function (username, password) {
+    console.log(username,password)
     const user = await this.findOne({ username })
-    if (username) {
+    if (user) {
         const isMatch = await bcrypt.compare(password, user.password)
-        if (isMatch) return username
+        if (isMatch) return user
         else return ("password not valid")
     }
     else return ("user not found!")

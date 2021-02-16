@@ -9,8 +9,14 @@ const basicAuth = async (req, res, next) => {
         error.httpStatusCode = 401
         next(error)
     } else {
-        const [username, password] = atob(req.headers.authorization.split("")[1]).split(":")
-        
+
+
+        // BAsic lksadjslakduas89d7as98
+
+        const [method, token] = req.headers.authorization.split(" ")
+        const decoded = atob(token)
+        const [username, password] = decoded.split(":")
+       
         const user = await UserModel.findByCredentials(username, password)
         if (!user) {
             const error = new Error("wrong wrong wrong credentials")
