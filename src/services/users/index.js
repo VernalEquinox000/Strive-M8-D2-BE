@@ -1,11 +1,11 @@
 const express = require("express")
 const UserModel = require("./schema")
-const {basic} = require("../authTools")
+const {basic, admin} = require("../authTools")
 
 
 const usersRouter = express.Router()
 
-usersRouter.get("/", basic, async (req, res, next) => {
+usersRouter.get("/", basic, admin, async (req, res, next) => {
     try {
         const users = await UserModel.find()
         res.send(users)
@@ -44,8 +44,16 @@ usersRouter.post("/register", async (req, res, next) => {
 }
 )
 
-usersRouter.get("/", async (req, res, next) => {
+usersRouter.put("/me", basic, async (req, res, next) => {
     try {
+        const updates = Object.keys(req.body)
+        console.log(updates)
+
+        updates.forEach(update => req.user[update] = req.body[update])
+        //console.log(req.body[update])
+        await req.user.save()
+        res.send(req.user)
+        res.send(updates)
         
     } catch (error) {
         console.log(error)
@@ -55,8 +63,10 @@ usersRouter.get("/", async (req, res, next) => {
 }
 )
 
-usersRouter.get("/", async (req, res, next) => {
+usersRouter.delete("/me", basic, async (req, res, next) => {
     try {
+        await req.user.deleteOne()
+        res.status(204).send("sayounara")
         
     } catch (error) {
         console.log(error)
